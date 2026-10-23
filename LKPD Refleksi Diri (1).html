@@ -1,0 +1,701 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>LKPD Refleksi Diri</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lembar kerja berkotak-kotak seperti buku tulis. Satu kolom bacaan, bar atas menempel
+   berisi navigasi tahap dan progres. Empat tahap bimbingan kelompok, tiga warna untuk tiga
+   pengalaman belajar mendalam (memahami, mengaplikasikan, merefleksi). */
+:root{
+  --paper:#F2F6F3; --surface:#FFFFFF; --ink:#12281F; --muted:#4E6359; --line:#C9D7CF;
+  --grid:rgba(14,107,92,.07);
+  --brand:#0E6B5C; --on-brand:#FFFFFF;
+  --mindful:#1F6FB2; --meaningful:#A8650A; --joyful:#BE3A57;
+  --hl:#FFE169;
+  --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --font-body:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+  --font-mono:'DM Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1914; --surface:#14251E; --ink:#E7F1EC; --muted:#9FB5AA; --line:#2A4035;
+    --grid:rgba(63,199,170,.07);
+    --brand:#3FC7AA; --on-brand:#062019;
+    --mindful:#74B6F0; --meaningful:#E8B45F; --joyful:#F28DA5;
+    --hl:#6B5800;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1914; --surface:#14251E; --ink:#E7F1EC; --muted:#9FB5AA; --line:#2A4035;
+  --grid:rgba(63,199,170,.07);
+  --brand:#3FC7AA; --on-brand:#062019;
+  --mindful:#74B6F0; --meaningful:#E8B45F; --joyful:#F28DA5;
+  --hl:#6B5800;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink);
+  font:16px/1.6 var(--font-body);
+  padding-block:0 3rem;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:10}
+.in{width:100%;max-width:900px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);line-height:1.15;margin:0;text-wrap:balance}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--brand) 55%,transparent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Bar atas */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar .in{display:flex;flex-direction:column;gap:.35rem;padding-block:.5rem 0}
+.steps{display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:none;padding-bottom:.25rem}
+.steps::-webkit-scrollbar{display:none}
+.step{flex:0 0 auto;border:0;background:transparent;padding:.35rem .7rem;border-radius:999px;cursor:pointer;font-size:.88rem;color:var(--muted);white-space:nowrap}
+.step:hover{background:color-mix(in srgb,var(--brand) 10%,var(--surface));color:var(--ink)}
+.step b{font-family:var(--font-mono);font-weight:500;margin-right:.35rem;color:var(--brand)}
+.meter{display:flex;align-items:center;gap:.6rem;font-family:var(--font-mono);font-size:.74rem;color:var(--muted);padding-bottom:.45rem}
+.meter .track{flex:1;height:5px;background:var(--line);border-radius:5px;overflow:hidden}
+.meter .fill{height:100%;width:0;background:var(--brand);transition:width .3s}
+
+/* Hero */
+.hero{padding-block:2.2rem 1.4rem}
+.eyebrow{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-weight:800;font-size:clamp(1.75rem,5.2vw,2.9rem);letter-spacing:-.01em;margin-block:.6rem .9rem}
+.hl{background:linear-gradient(transparent 58%,var(--hl) 58% 92%,transparent 92%);padding-inline:.1em}
+.lede{max-width:62ch;color:var(--muted)}
+.pillars{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.1rem}
+.phase{display:inline-flex;align-items:center;gap:.45rem;font-size:.85rem;padding:.25rem .7rem;border-radius:999px;border:1px solid color-mix(in srgb,var(--c) 45%,var(--line));background:color-mix(in srgb,var(--c) 10%,var(--surface));color:var(--ink)}
+.phase i{width:.6rem;height:.6rem;border-radius:50%;background:var(--c)}
+.p-mindful{--c:var(--mindful)} .p-meaningful{--c:var(--meaningful)} .p-joyful{--c:var(--joyful)}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(10.5rem,1fr));gap:.6rem;margin-top:1.4rem;padding:0;list-style:none}
+.flow li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.65rem .8rem;display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.flow .t{font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+.flow strong{font-family:var(--font-display);font-size:1.02rem}
+details.fac{margin-top:1.1rem;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.2rem .9rem}
+details.fac summary{cursor:pointer;padding:.6rem 0;font-weight:700}
+details.fac ul{margin:0 0 .8rem;padding-left:1.1rem;color:var(--muted)}
+details.fac li+li{margin-top:.25rem}
+
+/* Bagian */
+.sec{padding-block:1.6rem 0;scroll-margin-top:7rem}
+.sh{border-top:4px solid var(--c,var(--brand));padding-top:.8rem;display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem}
+.stage{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sh h2{font-size:clamp(1.4rem,3.8vw,1.9rem);font-weight:800}
+.sh .goal{color:var(--muted);max-width:64ch}
+.sh .phase{align-self:flex-start}
+.tasks{display:flex;flex-direction:column;gap:.9rem}
+.task{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.7rem;min-width:0}
+.tno{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--c,var(--brand))}
+.task h3{font-size:1.15rem;font-weight:700}
+.hint{color:var(--muted);font-size:.93rem}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr));gap:.8rem}
+.fld{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.fld label,.fld .lab{font-size:.88rem;font-weight:700}
+input[type=text],input[type=date],textarea{
+  width:100%;font:inherit;color:var(--ink);background-color:var(--surface);
+  border:1.5px solid var(--line);border-radius:8px;padding:.55rem .7rem;
+}
+input[type=text]:focus,input[type=date]:focus,textarea:focus{border-color:var(--brand)}
+textarea{resize:vertical;min-height:4.4rem}
+textarea.ruled{
+  line-height:2rem;padding-block:.15rem;min-height:6.3rem;
+  background-image:linear-gradient(to bottom,transparent calc(2rem - 1px),var(--line) calc(2rem - 1px));
+  background-size:100% 2rem;background-attachment:local;
+}
+.checks{display:flex;flex-direction:column;gap:.45rem}
+.check{display:flex;gap:.6rem;align-items:flex-start;cursor:pointer}
+.check input{width:1.15rem;height:1.15rem;margin-top:.22rem;accent-color:var(--brand);flex:0 0 auto}
+.check small{color:var(--muted)}
+
+/* Termometer */
+.thermo{display:flex;flex-direction:column;gap:.35rem}
+.thermo input[type=range]{width:100%;accent-color:var(--brand);height:1.8rem}
+.thermo .ends{display:flex;justify-content:space-between;gap:1rem;font-size:.82rem;color:var(--muted)}
+.thermo output{font-family:var(--font-display);font-weight:800;font-size:1.5rem}
+.thermo output small{font-family:var(--font-body);font-weight:400;font-size:.85rem;color:var(--muted)}
+
+/* Skala likert */
+.legend{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.2rem 1rem}
+.likert{display:flex;flex-direction:column;gap:.5rem}
+fieldset.item{border:0;margin:0;padding:.7rem 0;min-width:0;border-top:1px dashed var(--line)}
+fieldset.item:first-child{border-top:0;padding-top:0}
+fieldset.item legend{padding:0;float:left;width:100%;margin-bottom:.45rem}
+.item .q{display:block}
+.item .tag{display:block;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.opts{clear:both;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.4rem}
+.opt{display:block;cursor:pointer;min-width:0}
+.opt .pill{display:flex;flex-direction:column;align-items:center;padding:.4rem .2rem;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);line-height:1.2;transition:background .12s,border-color .12s}
+.opt .pill b{font-family:var(--font-display);font-size:1.1rem}
+.opt .pill small{font-family:var(--font-mono);font-size:.7rem;color:var(--muted)}
+.opt:hover .pill{border-color:var(--brand)}
+.opt input:checked + .pill{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.opt input:checked + .pill small{color:inherit}
+.opt input:focus-visible + .pill{outline:3px solid color-mix(in srgb,var(--brand) 55%,transparent);outline-offset:2px}
+
+/* Hasil skala */
+.result{display:flex;flex-direction:column;gap:.9rem}
+.score{display:flex;align-items:baseline;flex-wrap:wrap;gap:.3rem .8rem}
+.score .n{font-family:var(--font-display);font-weight:800;font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.score .of{color:var(--muted);font-family:var(--font-mono)}
+.cat{font-size:.85rem;font-weight:700;padding:.2rem .7rem;border-radius:999px;background:color-mix(in srgb,var(--brand) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--brand) 45%,var(--line))}
+.rows{display:flex;flex-direction:column;gap:.5rem}
+.brow{display:grid;grid-template-columns:minmax(0,9.5rem) minmax(0,1fr) 2.4rem;gap:.6rem;align-items:center;font-size:.88rem}
+.brow .tr{height:.8rem;background:color-mix(in srgb,var(--line) 70%,var(--surface));border-radius:6px;overflow:hidden}
+.brow .fl{height:100%;width:0;background:var(--brand);border-radius:6px;transition:width .3s}
+.brow.lo .fl{background:var(--meaningful)}
+.brow .v{font-family:var(--font-mono);text-align:right;font-variant-numeric:tabular-nums}
+.read{padding:.7rem .9rem;border-radius:10px;background:color-mix(in srgb,var(--brand) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--brand) 30%,var(--line))}
+.note{font-size:.84rem;color:var(--muted)}
+.focus{display:inline-block;padding:.1rem .55rem;border-radius:6px;background:var(--hl);color:var(--ink);font-weight:700}
+:root[data-theme="dark"] .focus{color:#FFF}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .focus{color:#FFF}}
+
+/* Chips dan tracker */
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{cursor:pointer}
+.chip span{display:inline-block;padding:.35rem .85rem;border:1.5px solid var(--line);border-radius:999px;background:var(--surface)}
+.chip input:checked + span{background:var(--c,var(--brand));border-color:var(--c,var(--brand));color:var(--on-brand);font-weight:700}
+.chip input:focus-visible + span{outline:3px solid color-mix(in srgb,var(--brand) 55%,transparent);outline-offset:2px}
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.4rem}
+.day{cursor:pointer;text-align:center}
+.day span{display:flex;flex-direction:column;align-items:center;padding:.4rem 0;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+.day span b{font-family:var(--font-display);font-size:1.05rem;color:var(--ink)}
+.day input:checked + span{background:var(--meaningful);border-color:var(--meaningful);color:#FFF}
+.day input:checked + span b{color:#FFF}
+.case{padding:.8rem 1rem;border-radius:10px;background:color-mix(in srgb,var(--c) 8%,var(--surface));border:1px dashed color-mix(in srgb,var(--c) 50%,var(--line))}
+.case b{font-family:var(--font-display)}
+
+/* Rangkuman dan tombol */
+textarea.sum{font-family:var(--font-mono);font-size:.82rem;line-height:1.55;min-height:16rem}
+.btns{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem}
+.btn{border:1.5px solid var(--brand);background:var(--brand);color:var(--on-brand);padding:.55rem 1.1rem;border-radius:8px;font-weight:700;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--joyful);color:var(--joyful)}
+.btn.warn{border-color:var(--joyful);color:var(--joyful)}
+.msg{font-size:.88rem;color:var(--muted)}
+footer{padding-block:2rem 0;font-size:.85rem;color:var(--muted)}
+footer .in{display:flex;flex-direction:column;gap:.6rem}
+@media (max-width:480px){
+  .task{padding:.9rem}
+  .brow{grid-template-columns:minmax(0,7rem) minmax(0,1fr) 2rem;font-size:.82rem}
+  .days{gap:.25rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<header class="bar">
+  <div class="in">
+    <nav class="steps" aria-label="Tahap kegiatan">
+      <button class="step" data-go="identitas"><b>0</b>Identitas</button>
+      <button class="step" data-go="k1"><b>1</b>Pembentukan</button>
+      <button class="step" data-go="k2"><b>2</b>Peralihan</button>
+      <button class="step" data-go="k3"><b>3</b>Kegiatan</button>
+      <button class="step" data-go="k4"><b>4</b>Pengakhiran</button>
+      <button class="step" data-go="rangkuman"><b>5</b>Rangkuman</button>
+    </nav>
+    <div class="meter" aria-live="polite">
+      <span id="pct">0% terisi</span>
+      <div class="track"><div class="fill" id="fill"></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="in hero">
+  <p class="eyebrow">LKPD · Bimbingan Kelompok · SMA YAS Sindangkerta</p>
+  <h1>Pengembangan LKPD <span class="hl">Refleksi Diri</span> Berbasis Deep Learning dalam Bimbingan Kelompok untuk Motivasi Belajar</h1>
+  <p class="lede">Lembar kerja ini mengajakmu mengenali semangat belajarmu sendiri, membicarakannya bersama teman satu kelompok, lalu menyusun langkah kecil yang benar-benar bisa kamu jalankan. Tidak ada jawaban benar atau salah. Jawab apa adanya.</p>
+  <div class="pillars">
+    <span class="phase p-mindful"><i></i>Memahami · berkesadaran</span>
+    <span class="phase p-meaningful"><i></i>Mengaplikasikan · bermakna</span>
+    <span class="phase p-joyful"><i></i>Merefleksi · menggembirakan</span>
+  </div>
+  <ol class="flow">
+    <li><span class="t">Tahap 1 · 15 menit</span><strong>Pembentukan</strong></li>
+    <li><span class="t">Tahap 2 · 25 menit</span><strong>Peralihan</strong></li>
+    <li><span class="t">Tahap 3 · 35 menit</span><strong>Kegiatan</strong></li>
+    <li><span class="t">Tahap 4 · 15 menit</span><strong>Pengakhiran</strong></li>
+  </ol>
+  <details class="fac">
+    <summary>Panduan fasilitator (guru BK)</summary>
+    <ul>
+      <li>Perkiraan waktu 90 menit atau dua jam pelajaran. Kelompok terdiri dari 5 sampai 8 siswa.</li>
+      <li>Bagi peran dalam kelompok: pemandu diskusi, pencatat, dan penjaga waktu. Peran bergilir pada tiap tahap.</li>
+      <li>Setiap siswa mengisi sendiri lebih dulu, baru berbagi. Berbagi bersifat sukarela.</li>
+      <li>Skor skala adalah cermin diri, bukan nilai. Jangan membandingkan skor antar siswa di depan kelompok.</li>
+      <li>Jika ada siswa yang menulis hal berat di luar urusan belajar, tindak lanjuti secara pribadi setelah sesi.</li>
+    </ul>
+  </details>
+</div>
+
+<!-- IDENTITAS -->
+<section class="sec" id="identitas">
+  <div class="in">
+    <div class="sh" style="--c:var(--brand)">
+      <span class="stage">Sebelum mulai</span>
+      <h2>Identitas</h2>
+    </div>
+    <div class="task">
+      <div class="grid2">
+        <div class="fld"><label for="nama">Nama lengkap</label><input type="text" id="nama" data-k="nama" autocomplete="off"></div>
+        <div class="fld"><label for="kelas">Kelas</label><input type="text" id="kelas" data-k="kelas" placeholder="contoh: XI IPS 2" autocomplete="off"></div>
+        <div class="fld"><label for="kelompok">Kelompok ke-</label><input type="text" id="kelompok" data-k="kelompok" autocomplete="off"></div>
+        <div class="fld"><label for="tgl">Tanggal</label><input type="date" id="tgl" data-k="tgl"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- K1 -->
+<section class="sec p-mindful" id="k1">
+  <div class="in">
+    <div class="sh">
+      <span class="stage">Tahap 1 dari 4 · Pembentukan · 15 menit</span>
+      <h2>Saling mengenal dan membuat kesepakatan</h2>
+      <span class="phase p-mindful"><i></i>Memahami · berkesadaran</span>
+      <p class="goal">Kamu dan kelompokmu saling menyapa, menyepakati aturan main, lalu mengecek seberapa semangat kamu belajar saat ini.</p>
+    </div>
+    <div class="tasks">
+      <div class="task">
+        <span class="tno">Tugas 1.1</span>
+        <h3>Kesepakatan kelompok</h3>
+        <p class="hint">Bacakan bersama, lalu centang yang kalian setujui.</p>
+        <div class="checks">
+          <label class="check"><input type="checkbox" data-k="as1"><span><b>Kerahasiaan.</b> <small>Cerita teman tidak dibawa keluar kelompok.</small></span></label>
+          <label class="check"><input type="checkbox" data-k="as2"><span><b>Keterbukaan.</b> <small>Kami berani jujur tentang pengalaman belajar kami.</small></span></label>
+          <label class="check"><input type="checkbox" data-k="as3"><span><b>Kesukarelaan.</b> <small>Berbagi cerita boleh dipilih, tidak dipaksa.</small></span></label>
+          <label class="check"><input type="checkbox" data-k="as4"><span><b>Keaktifan.</b> <small>Semua ikut mendengarkan dan berbicara.</small></span></label>
+          <label class="check"><input type="checkbox" data-k="as5"><span><b>Kesopanan.</b> <small>Kami tidak menghakimi atau menertawakan jawaban teman.</small></span></label>
+        </div>
+      </div>
+      <div class="task">
+        <span class="tno">Tugas 1.2</span>
+        <h3>Satu kata untuk perasaan belajarku hari ini</h3>
+        <div class="grid2">
+          <div class="fld"><label for="kata">Satu kata</label><input type="text" id="kata" data-k="kata" autocomplete="off"></div>
+          <div class="fld"><label for="alasankata">Karena…</label><input type="text" id="alasankata" data-k="alasankata" autocomplete="off"></div>
+        </div>
+      </div>
+      <div class="task">
+        <span class="tno">Tugas 1.3</span>
+        <h3>Termometer semangat awal</h3>
+        <p class="hint">Geser sesuai semangat belajarmu minggu ini.</p>
+        <div class="thermo">
+          <output id="t0o">belum diatur</output>
+          <input type="range" min="0" max="10" step="1" value="5" id="t0" data-k="t0" aria-label="Semangat belajar awal, 0 sampai 10">
+          <div class="ends"><span>0 · sangat lesu</span><span>10 · sangat bersemangat</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- K2 -->
+<section class="sec p-mindful" id="k2">
+  <div class="in">
+    <div class="sh">
+      <span class="stage">Tahap 2 dari 4 · Peralihan · 25 menit</span>
+      <h2>Mengenali semangat belajarku</h2>
+      <span class="phase p-mindful"><i></i>Memahami · berkesadaran</span>
+      <p class="goal">Kamu membaca diri sendiri lewat 12 pernyataan, lalu melihat bagian mana yang sudah kuat dan bagian mana yang perlu dinyalakan.</p>
+    </div>
+    <div class="tasks">
+      <div class="task">
+        <span class="tno">Tugas 2.1</span>
+        <h3>Skala refleksi diri</h3>
+        <p class="hint">Pilih angka yang paling menggambarkan dirimu akhir-akhir ini, bukan yang kamu inginkan.</p>
+        <div class="legend"><span>1 STS = sangat tidak setuju</span><span>2 TS = tidak setuju</span><span>3 S = setuju</span><span>4 SS = sangat setuju</span></div>
+        <div class="likert" id="scale"></div>
+      </div>
+      <div class="task">
+        <span class="tno">Tugas 2.2</span>
+        <h3>Hasil cerminku</h3>
+        <div class="result">
+          <div class="score"><span class="n" id="sc">–</span><span class="of">dari 48</span><span class="cat" id="cat" hidden></span></div>
+          <div class="rows" id="bars"></div>
+          <p class="read" id="read">Jawab semua 12 pernyataan untuk melihat hasilmu.</p>
+          <p class="note">Ini bukan nilai dan bukan diagnosis. Hasil ini hanya cermin untuk kamu dan kelompokmu, dan bisa berubah.</p>
+        </div>
+      </div>
+      <div class="task">
+        <span class="tno">Tugas 2.3</span>
+        <h3>Kenapa aku seperti ini?</h3>
+        <div class="fld"><label for="r1">Kapan terakhir kali aku merasa sangat semangat belajar? Apa yang terjadi saat itu?</label><textarea class="ruled" id="r1" data-k="r1"></textarea></div>
+        <div class="fld"><label for="r2">Apa yang paling sering membuat semangatku turun?</label><textarea class="ruled" id="r2" data-k="r2"></textarea></div>
+        <p class="hint">Setelah menulis, bagikan satu jawaban dalam kelompok jika kamu bersedia. Dengarkan teman tanpa memotong.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- K3 -->
+<section class="sec p-meaningful" id="k3">
+  <div class="in">
+    <div class="sh">
+      <span class="stage">Tahap 3 dari 4 · Kegiatan · 35 menit</span>
+      <h2>Mencari jalan keluar bersama</h2>
+      <span class="phase p-meaningful"><i></i>Mengaplikasikan · bermakna</span>
+      <p class="goal">Kelompok membahas satu kasus, lalu setiap orang menghubungkan belajar dengan cita-cita dan menyusun tantangan 7 hari.</p>
+    </div>
+    <div class="tasks">
+      <div class="task">
+        <span class="tno">Tugas 3.1</span>
+        <h3>Diskusi kasus Rani</h3>
+        <div class="case">
+          <p><b>Rani, kelas XI.</b> Di awal semester ia rajin mengerjakan tugas. Menjelang pertengahan semester, Rani mulai menunda tugas, merasa nilainya tidak naik walaupun sudah belajar, dan sering bermain gim sampai larut malam. Teman-teman dekatnya juga mulai santai. Pagi hari ia semakin berat berangkat ke sekolah.</p>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label for="c1">Penyebab dari dalam diri Rani</label><textarea id="c1" data-k="c1"></textarea></div>
+          <div class="fld"><label for="c2">Penyebab dari lingkungan Rani</label><textarea id="c2" data-k="c2"></textarea></div>
+        </div>
+        <div class="fld"><label for="c3">Kalau kamu temannya, apa yang akan kamu lakukan dan katakan?</label><textarea id="c3" data-k="c3"></textarea></div>
+        <div class="fld"><label for="c4">Bagian mana dari cerita Rani yang mirip denganmu? (boleh dikosongkan atau dibagikan secara lisan saja)</label><textarea id="c4" data-k="c4"></textarea></div>
+      </div>
+      <div class="task">
+        <span class="tno">Tugas 3.2</span>
+        <h3>Belajar untuk cita-citaku</h3>
+        <div class="grid2">
+          <div class="fld"><label for="cita">Cita-citaku setelah SMA</label><input type="text" id="cita" data-k="cita" autocomplete="off"></div>
+          <div class="fld"><label for="mapel">Pelajaran yang paling mendukungnya</label><input type="text" id="mapel" data-k="mapel" autocomplete="off"></div>
+        </div>
+        <div class="fld"><label for="kaitan">Hal yang kupelajari minggu ini yang ternyata berguna untuk cita-citaku</label><textarea class="ruled" id="kaitan" data-k="kaitan"></textarea></div>
+      </div>
+      <div class="task">
+        <span class="tno">Tugas 3.3</span>
+        <h3>Tantangan 7 hari</h3>
+        <p class="hint">Bagian yang ingin kukuatkan: <span class="focus" id="fokus">isi skala di tugas 2.1 dulu</span></p>
+        <div class="fld"><label for="rn1">Satu hal kecil yang akan kulakukan setiap hari</label><input type="text" id="rn1" data-k="rn1" placeholder="contoh: membaca catatan 15 menit sebelum tidur" autocomplete="off"></div>
+        <div class="grid2">
+          <div class="fld"><label for="rn2">Kapan dan di mana</label><input type="text" id="rn2" data-k="rn2" autocomplete="off"></div>
+          <div class="fld"><label for="rn3">Teman yang akan mengingatkanku</label><input type="text" id="rn3" data-k="rn3" autocomplete="off"></div>
+        </div>
+        <div class="fld"><label for="rn4">Tandanya aku berhasil</label><input type="text" id="rn4" data-k="rn4" autocomplete="off"></div>
+        <div class="fld"><span class="lab">Pelacak 7 hari (centang setelah kamu menjalankannya)</span>
+          <div class="days" id="days"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- K4 -->
+<section class="sec p-joyful" id="k4">
+  <div class="in">
+    <div class="sh">
+      <span class="stage">Tahap 4 dari 4 · Pengakhiran · 15 menit</span>
+      <h2>Menengok kembali dan berterima kasih</h2>
+      <span class="phase p-joyful"><i></i>Merefleksi · menggembirakan</span>
+      <p class="goal">Kamu merangkum apa yang kamu sadari, mengecek perubahan semangatmu, dan menutup sesi dengan apresiasi untuk kelompok.</p>
+    </div>
+    <div class="tasks">
+      <div class="task">
+        <span class="tno">Tugas 4.1</span>
+        <h3>Termometer semangat akhir</h3>
+        <div class="thermo">
+          <output id="t1o">belum diatur</output>
+          <input type="range" min="0" max="10" step="1" value="5" id="t1" data-k="t1" aria-label="Semangat belajar akhir, 0 sampai 10">
+          <div class="ends"><span>0 · sangat lesu</span><span>10 · sangat bersemangat</span></div>
+        </div>
+        <div class="fld"><span class="lab">Perasaanku sekarang</span>
+          <div class="chips">
+            <label class="chip"><input type="radio" class="sr" name="feel" data-k="feel" value="Lega"><span>Lega</span></label>
+            <label class="chip"><input type="radio" class="sr" name="feel" data-k="feel" value="Bersemangat"><span>Bersemangat</span></label>
+            <label class="chip"><input type="radio" class="sr" name="feel" data-k="feel" value="Tertantang"><span>Tertantang</span></label>
+            <label class="chip"><input type="radio" class="sr" name="feel" data-k="feel" value="Biasa saja"><span>Biasa saja</span></label>
+            <label class="chip"><input type="radio" class="sr" name="feel" data-k="feel" value="Masih ragu"><span>Masih ragu</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="task">
+        <span class="tno">Tugas 4.2</span>
+        <h3>Tiga kalimat refleksiku</h3>
+        <div class="fld"><label for="f1">Hari ini aku menyadari bahwa…</label><textarea class="ruled" id="f1" data-k="f1"></textarea></div>
+        <div class="fld"><label for="f2">Hal yang paling bermakna bagiku dari kegiatan ini adalah…</label><textarea class="ruled" id="f2" data-k="f2"></textarea></div>
+        <div class="fld"><label for="f3">Setelah ini aku akan…</label><textarea class="ruled" id="f3" data-k="f3"></textarea></div>
+      </div>
+      <div class="task">
+        <span class="tno">Tugas 4.3</span>
+        <h3>Penilaian kegiatan</h3>
+        <div class="legend"><span>1 STS</span><span>2 TS</span><span>3 S</span><span>4 SS</span></div>
+        <div class="likert" id="evals"></div>
+        <div class="fld"><label for="thx">Ucapan terima kasih untuk satu teman kelompok</label><input type="text" id="thx" data-k="thx" placeholder="Nama dan alasannya" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RANGKUMAN -->
+<section class="sec" id="rangkuman">
+  <div class="in">
+    <div class="sh" style="--c:var(--brand)">
+      <span class="stage">Penutup</span>
+      <h2>Rangkuman lembarku</h2>
+      <p class="goal">Rangkuman ini tersusun otomatis dari jawabanmu. Salin, lalu kirim ke guru BK atau simpan di catatanmu.</p>
+    </div>
+    <div class="task">
+      <label class="sr" for="sum">Rangkuman jawaban</label>
+      <textarea class="sum" id="sum" readonly></textarea>
+      <div class="btns">
+        <button class="btn" id="copy" type="button">Salin rangkuman</button>
+        <button class="btn ghost" id="reset" type="button">Hapus semua isian</button>
+        <span class="msg" id="msg" aria-live="polite"></span>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="in">
+    <p>Jawabanmu tersimpan otomatis hanya di peramban perangkat ini dan tidak dikirim ke mana pun. Jika kamu membuka lembar ini di perangkat lain, isiannya kosong lagi.</p>
+    <p>Produk pengembangan LKPD. Instrumen skala 12 butir disusun dari enam indikator motivasi belajar dan perlu validasi ahli serta uji coba terbatas sebelum dipakai untuk pengambilan data penelitian.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var KEY='lkpd-refleksi-diri-v1';
+  var state={};
+  try{var raw=localStorage.getItem(KEY);if(raw)state=JSON.parse(raw)||{};}catch(e){state={};}
+
+  var IND=['Hasrat dan keinginan berhasil','Dorongan dan kebutuhan belajar','Harapan dan cita-cita','Penghargaan dalam belajar','Kegiatan belajar yang menarik','Lingkungan belajar yang kondusif'];
+  var ITEMS=[
+    ['Aku ingin mendapat hasil belajar terbaik yang bisa kuusahakan.',0],
+    ['Kalau gagal, aku mau mencoba lagi dengan cara yang berbeda.',0],
+    ['Aku belajar karena merasa perlu, bukan hanya karena disuruh.',1],
+    ['Aku penasaran dan ingin tahu lebih banyak tentang pelajaran yang kupelajari.',1],
+    ['Aku punya gambaran tentang apa yang ingin kucapai setelah lulus SMA.',2],
+    ['Aku tahu pelajaran yang kupelajari ada kaitannya dengan cita-citaku.',2],
+    ['Pujian atau apresiasi dari guru, teman, atau orang tua membuatku lebih semangat.',3],
+    ['Aku bisa menghargai kemajuan kecilku sendiri.',3],
+    ['Aku bersemangat saat belajar dengan diskusi, praktik, atau proyek.',4],
+    ['Aku bisa menemukan sisi menarik dari pelajaran yang awalnya terasa membosankan.',4],
+    ['Aku punya teman yang saling mengingatkan dan mendukung untuk belajar.',5],
+    ['Aku punya waktu dan tempat yang cukup nyaman untuk belajar.',5]
+  ];
+  var EVALS=[
+    'Kegiatan ini membantuku mengenali semangat belajarku.',
+    'Aku nyaman berbagi cerita dalam kelompok.',
+    'Aku ingin mencoba rencana 7 harinya.'
+  ];
+  var LAB=['STS','TS','S','SS'];
+
+  function $(id){return document.getElementById(id);}
+
+  function buildLikert(host,list,prefix,showTag){
+    list.forEach(function(it,i){
+      var text=typeof it==='string'?it:it[0];
+      var fs=document.createElement('fieldset');fs.className='item';
+      var lg=document.createElement('legend');
+      if(showTag){var tg=document.createElement('span');tg.className='tag';tg.textContent=IND[it[1]];lg.appendChild(tg);}
+      var q=document.createElement('span');q.className='q';q.textContent=(i+1)+'. '+text;lg.appendChild(q);
+      fs.appendChild(lg);
+      var o=document.createElement('div');o.className='opts';
+      for(var v=1;v<=4;v++){
+        var lb=document.createElement('label');lb.className='opt';
+        var inp=document.createElement('input');inp.type='radio';inp.className='sr';
+        inp.name=prefix+i;inp.value=String(v);inp.setAttribute('data-k',prefix+i);
+        var pill=document.createElement('span');pill.className='pill';
+        var b=document.createElement('b');b.textContent=v;
+        var s=document.createElement('small');s.textContent=LAB[v-1];
+        pill.appendChild(b);pill.appendChild(s);
+        lb.appendChild(inp);lb.appendChild(pill);o.appendChild(lb);
+      }
+      fs.appendChild(o);host.appendChild(fs);
+    });
+  }
+  buildLikert($('scale'),ITEMS,'s',true);
+  buildLikert($('evals'),EVALS,'e',false);
+
+  var dh=$('days');
+  for(var d=1;d<=7;d++){
+    var lb=document.createElement('label');lb.className='day';
+    lb.innerHTML='<input type="checkbox" class="sr" data-k="d'+d+'"><span>Hari<b>'+d+'</b></span>';
+    dh.appendChild(lb);
+  }
+
+  var bh=$('bars');
+  IND.forEach(function(name,i){
+    var r=document.createElement('div');r.className='brow';r.id='br'+i;
+    r.innerHTML='<span></span><div class="tr"><div class="fl"></div></div><span class="v">–</span>';
+    r.firstChild.textContent=name;
+    bh.appendChild(r);
+  });
+
+  function restore(){
+    var els=document.querySelectorAll('[data-k]');
+    for(var i=0;i<els.length;i++){
+      var el=els[i],k=el.getAttribute('data-k');
+      if(el.type==='checkbox')el.checked=!!state[k];
+      else if(el.type==='radio')el.checked=(state[k]===el.value);
+      else if(el.type==='range')el.value=(state[k]!==undefined?state[k]:'5');
+      else el.value=(state[k]!==undefined?state[k]:'');
+    }
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  function g(k){return state[k]===undefined?'':String(state[k]).trim();}
+
+  function scoreInfo(){
+    var tot=0,n=0,ind=[0,0,0,0,0,0],cnt=[0,0,0,0,0,0];
+    ITEMS.forEach(function(it,i){
+      var v=parseInt(state['s'+i],10);
+      if(v){tot+=v;n++;ind[it[1]]+=v;cnt[it[1]]++;}
+    });
+    return {tot:tot,n:n,ind:ind,cnt:cnt};
+  }
+  function category(t){
+    if(t<=24)return ['Perlu dinyalakan','Semangat belajarmu sedang butuh dinyalakan lagi. Itu wajar dan bisa berubah. Mulailah dari satu bagian yang paling rendah, jangan semuanya sekaligus.'];
+    if(t<=36)return ['Sedang tumbuh','Semangatmu sudah ada dan tinggal dijaga. Kuatkan satu bagian yang paling rendah, dan pertahankan bagian yang sudah kuat.'];
+    return ['Kuat','Semangat belajarmu kuat. Bagikan caramu menjaganya kepada teman satu kelompok, dan tetap perhatikan bagian yang paling rendah.'];
+  }
+  function weakest(si){
+    if(si.n<ITEMS.length)return -1;
+    var lo=0,hi=0;
+    for(var i=1;i<6;i++){if(si.ind[i]<si.ind[lo])lo=i;if(si.ind[i]>si.ind[hi])hi=i;}
+    return {lo:lo,hi:hi};
+  }
+
+  function buildSummary(si,wk){
+    var L=[];
+    L.push('LKPD REFLEKSI DIRI · SMA YAS SINDANGKERTA');
+    L.push('Nama: '+(g('nama')||'-')+' | Kelas: '+(g('kelas')||'-')+' | Kelompok: '+(g('kelompok')||'-')+' | Tanggal: '+(g('tgl')||'-'));
+    L.push('');
+    L.push('SEMANGAT BELAJAR');
+    var a=state.t0,b=state.t1;
+    var line='Termometer awal: '+(a!==undefined?a+'/10':'-')+' | akhir: '+(b!==undefined?b+'/10':'-');
+    if(a!==undefined&&b!==undefined){var df=b-a;line+=' | perubahan: '+(df>0?'+':'')+df;}
+    L.push(line);
+    if(g('kata'))L.push('Satu kata perasaanku: '+g('kata')+(g('alasankata')?' (karena '+g('alasankata')+')':''));
+    if(si.n===ITEMS.length){
+      var c=category(si.tot);
+      L.push('Skor skala: '+si.tot+'/48 ('+c[0]+')');
+      L.push('Terkuat: '+IND[wk.hi]+' | Perlu dikuatkan: '+IND[wk.lo]);
+    }else{
+      L.push('Skor skala: belum lengkap ('+si.n+' dari 12 terjawab)');
+    }
+    L.push('');
+    L.push('REFLEKSI AWAL');
+    L.push('Saat paling semangat: '+(g('r1')||'-'));
+    L.push('Yang menurunkan semangat: '+(g('r2')||'-'));
+    L.push('');
+    L.push('CITA-CITA DAN RENCANA 7 HARI');
+    L.push('Cita-cita: '+(g('cita')||'-')+' | Pelajaran pendukung: '+(g('mapel')||'-'));
+    L.push('Kaitan belajar dengan cita-cita: '+(g('kaitan')||'-'));
+    L.push('Yang akan kulakukan: '+(g('rn1')||'-'));
+    L.push('Kapan dan di mana: '+(g('rn2')||'-')+' | Pengingat: '+(g('rn3')||'-'));
+    L.push('Tanda berhasil: '+(g('rn4')||'-'));
+    var days=0;for(var d=1;d<=7;d++){if(state['d'+d])days++;}
+    L.push('Pelacak: '+days+' dari 7 hari dijalankan');
+    L.push('');
+    L.push('REFLEKSI AKHIR');
+    L.push('Perasaan: '+(g('feel')||'-'));
+    L.push('Aku menyadari bahwa: '+(g('f1')||'-'));
+    L.push('Paling bermakna: '+(g('f2')||'-'));
+    L.push('Setelah ini aku akan: '+(g('f3')||'-'));
+    L.push('Terima kasih untuk: '+(g('thx')||'-'));
+    return L.join('\n');
+  }
+
+  function update(){
+    // termometer
+    $('t0o').innerHTML=state.t0!==undefined?state.t0+' <small>dari 10</small>':'belum diatur';
+    $('t1o').innerHTML=state.t1!==undefined?state.t1+' <small>dari 10</small>':'belum diatur';
+
+    // skala
+    var si=scoreInfo(),wk=weakest(si);
+    for(var i=0;i<6;i++){
+      var row=$('br'+i);
+      var sc=si.ind[i];
+      row.querySelector('.fl').style.width=(sc/8*100)+'%';
+      row.querySelector('.v').textContent=si.cnt[i]?sc:'–';
+      row.classList.toggle('lo',wk!==-1&&wk.lo===i);
+    }
+    var catEl=$('cat'),read=$('read'),fokus=$('fokus');
+    if(wk!==-1){
+      var c=category(si.tot);
+      $('sc').textContent=si.tot;
+      catEl.hidden=false;catEl.textContent=c[0];
+      read.textContent=c[1]+' Bagian terkuatmu: '+IND[wk.hi]+'. Bagian yang bisa dikuatkan: '+IND[wk.lo]+'.';
+      fokus.textContent=IND[wk.lo];
+    }else{
+      $('sc').textContent='–';
+      catEl.hidden=true;
+      read.textContent='Jawab semua 12 pernyataan untuk melihat hasilmu. Terjawab: '+si.n+' dari 12.';
+      fokus.textContent='isi skala di tugas 2.1 dulu';
+    }
+
+    // progres
+    var seen={},total=0,done=0,els=document.querySelectorAll('[data-k]');
+    for(var j=0;j<els.length;j++){
+      var el=els[j],k=el.getAttribute('data-k');
+      if(el.type==='checkbox'||seen[k])continue;
+      seen[k]=1;total++;
+      if(g(k)!=='')done++;
+    }
+    var pct=total?Math.round(done/total*100):0;
+    $('pct').textContent=pct+'% terisi';
+    $('fill').style.width=pct+'%';
+
+    $('sum').value=buildSummary(si,wk);
+  }
+
+  function onChange(e){
+    var t=e.target,k=t.getAttribute&&t.getAttribute('data-k');
+    if(!k)return;
+    if(t.type==='checkbox')state[k]=t.checked;
+    else if(t.type==='radio'){if(t.checked)state[k]=t.value;}
+    else state[k]=t.value;
+    save();update();
+  }
+  document.addEventListener('input',onChange);
+  document.addEventListener('change',onChange);
+
+  // navigasi
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var navs=document.querySelectorAll('[data-go]');
+  for(var n=0;n<navs.length;n++){
+    navs[n].addEventListener('click',function(){
+      var target=$(this.getAttribute('data-go'));
+      if(target)target.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+    });
+  }
+
+  // salin
+  var msg=$('msg');
+  $('copy').addEventListener('click',function(){
+    var ta=$('sum');
+    function fallback(){ta.focus();ta.select();msg.textContent='Teks sudah terpilih. Salin dengan Ctrl+C atau tekan lama lalu pilih Salin.';}
+    try{
+      navigator.clipboard.writeText(ta.value).then(function(){msg.textContent='Rangkuman tersalin.';},fallback);
+    }catch(e){fallback();}
+  });
+
+  // hapus (konfirmasi dua langkah di halaman)
+  var rb=$('reset'),armed=false,timer=null;
+  rb.addEventListener('click',function(){
+    if(!armed){
+      armed=true;rb.textContent='Klik lagi untuk menghapus';rb.classList.add('warn');
+      timer=setTimeout(function(){armed=false;rb.textContent='Hapus semua isian';rb.classList.remove('warn');},4000);
+      return;
+    }
+    clearTimeout(timer);armed=false;
+    rb.textContent='Hapus semua isian';rb.classList.remove('warn');
+    state={};try{localStorage.removeItem(KEY);}catch(e){}
+    restore();update();msg.textContent='Semua isian dihapus.';
+  });
+
+  restore();update();
+})();
+</script>
+
+</body></html>
